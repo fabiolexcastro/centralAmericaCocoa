@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1505335578545.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3001586218",
+    "id" : "8EB73EF9",
+    "lastKnownWriteTime" : 1506008419,
+    "last_content_update" : 1506008419,
+    "path" : "W:/_cam/_codes/_r/_graphHND/extractRastersFuture.R",
+    "project_path" : "extractRastersFuture.R",
+    "properties" : {
+        "cursorPosition" : "21,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

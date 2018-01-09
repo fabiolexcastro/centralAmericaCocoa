@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1515077199970.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3668026428",
+    "id" : "4B710FBD",
+    "lastKnownWriteTime" : 1493239234,
+    "last_content_update" : 1493239234,
+    "path" : "W:/_eastAfrica/_codes/_R/_suitAnalysis/15_countHasPorcCluster.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "59,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 12,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

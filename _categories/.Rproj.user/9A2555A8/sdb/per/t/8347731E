@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\nrequire(rgeos)\nrequire(gtools)\nrequire(stringr)\nrequire(doMC)\nrequire(foreach)\nrequire(doSNOW)\n\n# Initial setup\nrm(list = ls())\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  setwd('//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n} else {\n  if(OSys == 'Windows'){\n    setwd('//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n  }\n}\ncat('\\f')\n\n# Functions\nmkdirs <- function(fp) {\n  \n  if(!file.exists(fp)) {\n    mkdirs(dirname(fp))\n    dir.create(fp)\n  }\n  \n} \n\nmixtaCategory <- function(pathClust, pathUnc, pathProb, threshold_unc, threshold){\n  \n  lyrClust <- raster(pathClust)\n  lyrUnc   <- raster(pathUnc)\n  lyrProb  <- raster(pathProb)# To 2 criterios\n \n  result <- lyrClust\n  \n  result[which(lyrUnc[] < threshold_unc & lyrProb[] > threshold)] <- max(unique(lyrClust[]), na.rm = T) + 1\n  \n  return(result)\n  \n}\n\n# Execute functions\nrun <- '_run6'\nload(paste0('_rData/', run, '/threshold_prob.rData'))\nload(paste0('_rData/', run, '/threshold_prob05.rData'))\nload(paste0('_rData/', run, '/threshold_unc.rData'))\nload(file = paste0('_rData/', run, '/clustereddata.rData'))\n\npath_future <- paste0('_RF/', run, '/_results')\nyears <- c('_2030', '_2050')\nmodels <- list.files(paste0('_RF/_run6/_results/_process/_limitations/', years[1])) %>%\n              gsub('RF_5Clust_lim_', '', .) %>%\n              gsub('.asc', '', .) \nno.clusters <- 5\n\n# registerDoMC(19)\ncl <- makeCluster(length(models)) #Número de nucleos a utilizar\nregisterDoSNOW(cl)\n\nforeach(i = 1:length(models), .packages = c('raster', 'dplyr', 'gtools', 'foreach', 'sp', 'stringr'), .verbose = TRUE) %dopar% {\n  \n  # print(models[i]) \n  \n  foreach(j = 1:length(years)) %do% {\n    \n    print(years[j])\n  \n    path_clust <- paste(path_future, '_process/_limitations', years[j], sep = '/') %>%\n                    list.files(., full.names = T, pattern = '.asc') %>% \n                    grep('Clust', ., value = T) %>%\n                    grep(models[i], ., value = T, fixed = T) %>%\n                    .[1]\n                  \n    path_Unc   <- paste(path_future, '_raw', years[j], sep = '/') %>%\n                    list.files(., full.names = T, pattern = '.asc') %>% \n                    grep('Unc', ., value = T) %>%\n                    grep(models[i], ., value = T, fixed = T) %>%\n                    .[1]\n    \n    path_prob   <- paste(path_future, '_raw', years[j], sep = '/') %>%\n                    list.files(., full.names = T, pattern = '.asc') %>% \n                    grep('Prob', ., value = T) %>%\n                    grep(models[i], ., value = T, fixed = T) %>%\n                    .[1]\n    \n    mixta <- mixtaCategory(pathClust = path_clust,\n                           pathUnc = path_Unc,\n                           pathProb = path_prob,\n                           threshold_unc = thrUnc, \n                           threshold = threshold)\n    \n    writeRaster(mixta, paste0('_RF/', run, '/_results/_process/_percentil0_5/_mixed/', years[j], '/RF_', no.clusters, 'Classes_unc_', models[i], '.asc'), overwrite = T)\n  \n  }\n  \n}\n\n\n\n",
+    "created" : 1510154862856.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3937885461",
+    "id" : "8347731E",
+    "lastKnownWriteTime" : 1511974825,
+    "last_content_update" : 1511974830830,
+    "path" : "Z:/_cam/_codes/_r/_categories/2_categoryUnc_Future.R",
+    "project_path" : "2_categoryUnc_Future.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

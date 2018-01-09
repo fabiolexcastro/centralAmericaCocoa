@@ -1,0 +1,16 @@
+
+# Load libraries
+library(raster)
+library(rgdal)
+library(dplyr)
+library(tidyr)
+library(sf)
+library(gtools)
+
+# Initial setup
+rm(list = ls())
+options(scipen = 999)
+setwd('Z:/')
+myproj <- '+proj=longlat +datum=WGS84 +no_defs'
+
+# Load data

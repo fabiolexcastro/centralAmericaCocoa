@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# CIAT, 2017\n# Author: Castro \n# Target: Impact gradient cluster amon all the class\n\nlibrary(ggalt)\nlibrary(hrbrthemes)\nlibrary(tidyverse)\nlibrary(raster)\nlibrary(rgdal)\nlibrary(magrittr)\n\n# Initial setup\nrm(list = ls())\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  setwd('//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n} else {\n  if(OSys == 'Windows'){\n    setwd('//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n  }\n}\noptions(scipen = 999)\ncat('\\f')\n\n# Function to create the convert a Integer\n\n# Load data\nfls <- list.files('_RF/_run6/_results/_process/_mixed', full.names = T, pattern = '.asc$')\nst  <- stack(fls)\nst_rnd <- round(st, 0) %>% unstack()\nnms <- c('2030', '2050', 'crn')\n\nMap('writeRaster', x = st_rnd, filename = paste0('_RF/_run6/_results/_process/_mixed/RF_5Classes_unc_int_', nms, '.tif'))\n",
+    "created" : 1515071056088.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "248447713",
+    "id" : "D1F3AA5B",
+    "lastKnownWriteTime" : 1515076946,
+    "last_content_update" : 1515076946587,
+    "path" : "Z:/_cam/_codes/_r/_categories/5_impactGradient_allClasses.R",
+    "project_path" : "5_impactGradient_allClasses.R",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

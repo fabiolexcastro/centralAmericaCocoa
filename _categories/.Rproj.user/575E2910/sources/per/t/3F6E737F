@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1515004901891.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1137859410",
+    "id" : "3F6E737F",
+    "lastKnownWriteTime" : 1512073255,
+    "last_content_update" : 1512073255,
+    "path" : "W:/_cam/_codes/_r/_categories/4_impactGradient_uncMix.R",
+    "project_path" : "4_impactGradient_uncMix.R",
+    "properties" : {
+        "cursorPosition" : "23,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

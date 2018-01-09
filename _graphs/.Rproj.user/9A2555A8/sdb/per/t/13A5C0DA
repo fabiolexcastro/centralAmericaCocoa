@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\nlibrary(dplyr)\nlibrary(readr)\nlibrary(rgeos)\nlibrary(gtools)\nlibrary(raster)\n\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  path <- '//mnt/Workspace_cluster_9/Coffee_Cocoa2/_eastAfrica' \n} else {\n  if(OSys == 'Windows'){\n    path <- '//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_eastAfrica'\n  }\n}\n\nsource('Z:/_cam/_codes/_r/_graphs/A2R_dendrogram.R')\nsetwd('Z:/_cam')\n\n\n## Rough dendrogram \nocc <- read.csv('_points/_csv/_run6/6_occ_swd_rmOtl.csv')\nbios <- paste0('bio_', 1:35, '.asc')\nlyrs <- list.files('', full.names = T, pattern = '.asc$') %>%\n            mixedsort() %>%\n            lapply(FUN = raster)\nlyrs <- stack(paste0(path, '/_raster/_extents/_mlw/_current/', bios))\nocc_swd <- raster::extract(lyrs, occ[,1:2])\nocc_swd <- cbind(occ, occ_swd)\ndatRF   <- as.data.frame(occ[,3:ncol(occ)])\nd <- dist(datRF,method = \"euclidean\")\nclusterdata <- hclust(d,method=\"ward.D2\")\nplot(clusterdata)\n\nrect.hclust(clusterdata, k = 2)\n\nfor(i in 2:10){\n  \n  rect.hclust(clusterdata,k=i)\n}\n\n\n# Dendogram RF Clustering\n\nload('./_rData/_run6/rfclustering.rData')\nload('./_rData/_run6/rfclustering.rData')\nload('./_rData/_run6/clusterdata.rData')\n\nclusterdata\nED.clusters <- 5\n\n## Make a nice Dendrogram\n\nppar          <- par(no.readonly=TRUE)\nclusterlabels <- paste(\"Cluster\",1:ED.clusters)\n\npng(filename = 'Z:/_cam/_figures/dendogram_run6_2.png', width = 9, height = 6, units = \"in\", res = 300)\nopar <- par(no.readonly=TRUE)\nA2Rplot.hclust(clusterdata, k = ED.clusters, boxes = FALSE, col.up = \"gray50\", #clusterdata\n               col.down = c(\"#4bd14b\", \"#ce53ed\", \"#dbc24f\",\"#a87000\",\"#57debe\"),\n               #        main=\"Dendrogram of agglomerative clustering\",\n               main=NULL,\n               ylab=\"Height\",\n               mtext(seq(0, 1000000, 10000), side = 2, at = seq(0, 1000000, 10000), # seq(0,10000,5000), at = seq(0, 5000, 1000),\n                     line = 1, las = 1),\n               hang=-1,axes=T,show.labels=F,lty.up = 2,lty.down = 1)\n\nA2Rplot.hclust(clusterdata, k = ED.clusters, boxes = FALSE, col.up = \"gray50\", #clusterdata\n               col.down = c(\"#4bd14b\", \"#ce53ed\", \"#dbc24f\",\"#a87000\",\"#57debe\"),\n               #        main=\"Dendrogram of agglomerative clustering\",\n               main=NULL,\n               ylab=\"Height\",\n               hang=-1,axes=T,show.labels=F,lty.up = 2,lty.down = 1)\n\naxis(side = 2, at = seq(0, 5000, 1000), labels = F, lwd = 1, line = -4.5, tick = T) # at = seq(0, 2, 0.36), at = seq(0, 5000, 1000)\ntitle(ylab = \"RF Clustering\", line = -2.5)# 'Euclidenn distance'\npar(opar)\n\n# legend coordinates depend on Euclidean distance (y) and number of cases (x)\nlegend(\"topright\", legend = c('Type 1', 'Type 2', 'Type 3', 'Type 4', 'Type 5'), col = c(\"#4bd14b\", \"#ce53ed\", \"#dbc24f\", '#a87000', '#57debe'),\n       lty = 1, lwd = 2) # legend = clusterlabels, y.intersp = 1.1\n## Dendrogram Ende\ndev.off()\n",
+    "created" : 1512135442450.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "432607961",
+    "id" : "13A5C0DA",
+    "lastKnownWriteTime" : 1512135698,
+    "last_content_update" : 1512135698779,
+    "path" : "Z:/_cam/_codes/_r/_graphs/XX_dendrogram.R",
+    "project_path" : "XX_dendrogram.R",
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

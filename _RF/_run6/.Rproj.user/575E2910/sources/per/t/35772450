@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512154074351.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4121547975",
+    "id" : "35772450",
+    "lastKnownWriteTime" : 1509542363,
+    "last_content_update" : 1509542363,
+    "path" : "W:/_cam/_codes/_r/_RF/_run6/1_contrastPlots.R",
+    "project_path" : "1_contrastPlots.R",
+    "properties" : {
+        "cursorPosition" : "42,27",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

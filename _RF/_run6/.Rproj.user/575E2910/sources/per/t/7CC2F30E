@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1510145993018.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3943702387",
+    "id" : "7CC2F30E",
+    "lastKnownWriteTime" : 1512655579,
+    "last_content_update" : 1512655579803,
+    "path" : "W:/_cam/_codes/_r/_RF/_run6/heatmap.R",
+    "project_path" : "heatmap.R",
+    "properties" : {
+        "cursorPosition" : "33,0",
+        "scrollLine" : "2",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

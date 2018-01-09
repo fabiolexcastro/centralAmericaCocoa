@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1515004871166.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4249402151",
+    "id" : "9C1CCE19",
+    "lastKnownWriteTime" : 1515093407,
+    "last_content_update" : 1515093407478,
+    "path" : "W:/_cam/_codes/_r/_categories/5_impactGradient_allClasses.R",
+    "project_path" : "5_impactGradient_allClasses.R",
+    "properties" : {
+        "cursorPosition" : "93,0",
+        "scrollLine" : "64",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

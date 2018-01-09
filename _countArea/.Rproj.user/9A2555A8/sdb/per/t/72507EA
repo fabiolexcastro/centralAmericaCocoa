@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\n\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\n\n# Initial setup\nrm(list = ls())\noptions(scipen = 999)\ncat('\\f')\nsetwd('Z:/_cam')\n\n# Function to use\ncalc_area <- function(lyr, shp, yr){\n  \n  # Tabulate function\n  tabFunc <- function(indx, extracted, region, regname) {\n    \n    dat <- as.data.frame(table(extracted[[indx]]))\n    dat$name <- region[[regname]][[indx]]\n    \n    return(dat)\n  }\n  \n  # Extraction data\n  ext <- raster::extract(lyr, adm, method = 'simple')\n  tabs <- lapply(seq(ext), tabFunc, ext, adm, 'NAME_ENGLI')\n  \n  print('Extraction done')\n  \n  # Tidy data.frame\n  df <- do.call(rbind, tabs) %>%\n    group_by(name) %>% \n    mutate(Porcentaje = (Freq/sum(Freq)) * 100) %>% \n    ungroup() %>%\n    mutate(Porcentaje = round(Porcentaje, 1),\n           Var1 = as.numeric(as.character(Var1)))\n  \n  # labs <- data.frame(number = c(0, 1, 3, 4, 5), categoria = c('Unsuitable', 'Incremental adaptation', 'Transform', 'Expansion', 'Systemic Resilience'))\n  # df <- inner_join(df, labs, by = c('Var1' = 'number'))\n  \n  write.csv(df, paste0('_tables/_cluster/_run6/count_pixelesbyADM0_', yr, '.csv'), row.names = F)\n  \n  print('Done')\n  \n}\n\n# Load data\nadm <- shapefile('_shp/_base/_admCountries/CAM_Adm0.shp')\ncrn <- raster('_RF/_run6/_results/_process/_percentil0_5/_mixed/RF_5Classes_unccurrent.asc')\nc30 <- raster('_RF/_run6/_results/_process/_percentil0_5/_mixed/RF_5Classes_unc_2030.asc')\nc50 <- raster('_RF/_run6/_results/_process/_percentil0_5/_mixed/RF_5Classes_unc_2050.asc')\n\n# Execute functions\ncalc_area(lyr = crn, shp = adm, yr = 'crn')\ncalc_area(lyr = c30, shp = adm, yr = 30)\ncalc_area(lyr = c50, shp = adm, yr = 50)\n\n# Create graph\nread.csv('_tables/_cluster/_run6/count_pixelesbyADM0_30.csv')\n\n\n",
+    "created" : 1513255544337.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3960500380",
+    "id" : "72507EA",
+    "lastKnownWriteTime" : 1513710043,
+    "last_content_update" : 1513710044078,
+    "path" : "Z:/_cam/_codes/_r/_countArea/count_clusters.R",
+    "project_path" : "count_clusters.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

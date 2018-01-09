@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\n# Load libraries\nrequire(tidyverse)\nrequire(raster)\n\n# Initial setup\nrm(list = ls())\nsetwd('Z:/_cam')\nsetwd('W:/_cam')\noptions(scipen = 999)\n\n# Load data - Summaries\nsuit_crn <- raster('_RF/_run6/_results/_raw/_current/RF_5Prob_current.asc')\nsuit_30 <- raster('_RF/_run6/_results/_process/RF_5prob_2030.asc')\nsuit_50 <- raster('_RF/_run6/_results/_process/RF_5prob_2050.asc')\n\n# Difference\ndif_30 <- suit_30 - suit_crn\ndif_50 <- suit_50 - suit_crn\n\nwriteRaster(dif_30, '_RF/_run6/_results/_process/RF_diff30_prob.asc')\nwriteRaster(dif_50, '_RF/_run6/_results/_process/RF_diff50_prob.asc')\n\n# Load data - Summaries\nmodels <- c('gfdl_esm2m',  'mohc_hadgem2_es', 'nimr_hadgem2_ao')\nnms.30 <- list.files('_RF/_run6/_results/_raw/_2030', full.names = F, pattern = '.asc$') %>% grep(paste0(models, collapse = '|'), ., value = T) %>% grep('Prob', ., value = T)\nnms.50 <- list.files('_RF/_run6/_results/_raw/_2050', full.names = F, pattern = '.asc$') %>% grep(paste0(models, collapse = '|'), ., value = T) %>% grep('Prob', ., value = T)\nlyr_30 <- list.files('_RF/_run6/_results/_raw/_2030', full.names = T, pattern = '.asc$') %>% grep(paste0(models, collapse = '|'), ., value = T) %>% grep('Prob', ., value = T) %>% lapply(raster)\nlyr_50 <- list.files('_RF/_run6/_results/_raw/_2050', full.names = T, pattern = '.asc$') %>% grep(paste0(models, collapse = '|'), ., value = T) %>% grep('Prob', ., value = T) %>% lapply(raster)\n\ndif_mdls_30 <- lapply(1:length(lyr_30), function(x) lyr_30[[x]] - suit_crn)\ndif_mdls_50 <- lapply(1:length(lyr_50), function(x) lyr_50[[x]] - suit_crn)\n\n\nMap('writeRaster', x = dif_mdls_30, filename = paste0('_RF/_run6/_results/_process/diff_', nms.30))\nMap('writeRaster', x = dif_mdls_50, filename = paste0('_RF/_run6/_results/_process/diff_', nms.50))\n\n\n",
+    "created" : 1513015994577.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1139399362",
+    "id" : "D80DFE76",
+    "lastKnownWriteTime" : 1513021439,
+    "last_content_update" : 1513021440079,
+    "path" : "Z:/_cam/_codes/_r/_RF/_run6/10_diff_porcentual.R",
+    "project_path" : "10_diff_porcentual.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

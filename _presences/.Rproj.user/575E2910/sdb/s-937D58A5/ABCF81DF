@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\nrequire(sf)\nrequire(readxl)\n\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  path <- '//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam' \n} else {\n  if(OSys == 'Windows'){\n    path <- '//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam'\n  }\n}\n\nfiles <- list.files(paste0(path, '/_points'), full.names = T, pattern = '.xlsx$')\npath_output <- paste0(path, '/_points/_new')\n\n# writeDF <- function(file, path_output, sheet){\n  \n  # FILE 1\n\n  file <- files[1]\n  sheet <- 1\n  \n  df <- read_excel(file, sheet = sheet, skip = 2) %>%\n          rename(X = X_COORDINATE,\n                 Y = Y_COORDINATE)\n  \n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '.csv')\n  write.csv(df, paste(path_output, nameDF, sep = '/'))\n  \n  #\n  \n  file <- files[1]\n  sheet <- 2\n  \n  df <- read_excel(file, sheet = sheet, skip = 1) %>%\n          .[1:5,]\n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y', 'Altitud')\n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '2.csv')\n  \n  write.csv(df, paste('W:/_cam/_points/_new/', nameDF))\n  \n  # FILE 2\n  \n  file <- files[2]\n  sheet <- 1\n  \n  df <- read_excel(file, sheet = sheet, skip = 2) \n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y')\n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '1.csv')\n  df <- df[-1,]\n  \n  write.csv(df, paste('W:/_cam/_points/_new/', nameDF))\n  \n  # \n  \n  file <- files[2]\n  sheet <- 2\n  \n  df <- read_excel(file, sheet = sheet, skip = 2) \n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y')\n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '2.csv')\n  df <- df[-1,]\n  \n  write.csv(df, paste('W:/_cam/_points/_new/', nameDF))\n  \n  # \n  \n  file <- files[2]\n  sheet <- 3\n  \n  df <- read_excel(file, sheet = sheet, skip = 2) \n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y')\n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '3.csv')\n  df <- df[-1,]\n  \n  write.csv(df, paste('W:/_cam/_points/_new/', nameDF))\n  \n  # \n  \n  file <- files[2]\n  sheet <- excel_sheets(file)[4]\n  \n  df <- read_excel(file, sheet = sheet, skip = 2)\n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y')\n  df <- df[complete.cases(df),]\n  \n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '4.csv')\n  write.csv(df, paste(path_output, nameDF, sep = '/'))\n  \n  #\n  \n  file <- files[2]\n  sheet <- excel_sheets(file)[5]\n  \n  df <- read_excel(file, sheet = sheet, skip = 2)\n  colnames(df) <- c('Fecha', 'Ubicacion', 'Dpto', 'Specie', 'X', 'Y')\n  df <- df[complete.cases(df),]\n  \n  nameDF <- paste0(unlist(strsplit(basename(file), '.xlsx')), '5.csv')\n  write.csv(df, paste(path_output, nameDF, sep = '/'))\n  \n  \n  \n# }\n\n\n",
+    "created" : 1501605408806.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4043125300",
+    "id" : "ABCF81DF",
+    "lastKnownWriteTime" : 1501620084,
+    "last_content_update" : 1501620084252,
+    "path" : "W:/_cam/_codes/_r/_presences/importPresencesExcel.R",
+    "project_path" : "importPresencesExcel.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

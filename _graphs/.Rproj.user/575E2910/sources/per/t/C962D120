@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512060922947.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "646989814",
+    "id" : "C962D120",
+    "lastKnownWriteTime" : 1512134156,
+    "last_content_update" : 1512134156,
+    "path" : "W:/_cam/_codes/_r/_RF/_run6/0_clusterAnalysis.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "178,23",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

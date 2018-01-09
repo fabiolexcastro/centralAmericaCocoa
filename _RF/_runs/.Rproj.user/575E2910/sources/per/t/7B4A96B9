@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508859976153.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3160697797",
+    "id" : "7B4A96B9",
+    "lastKnownWriteTime" : 1507152374,
+    "last_content_update" : 1507152374,
+    "path" : "W:/_cam/_codes/_r/_RF/_runs/0_clusterAnalysisPlots.R",
+    "project_path" : "0_clusterAnalysisPlots.R",
+    "properties" : {
+        "cursorPosition" : "141,16",
+        "scrollLine" : "124"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

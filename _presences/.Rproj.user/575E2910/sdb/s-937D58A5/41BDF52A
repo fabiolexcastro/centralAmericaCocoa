@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\nrequire(tidyverse)\n\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  path <- '//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam' \n} else {\n  if(OSys == 'Windows'){\n    path <- '//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam'\n  }\n}\n\nfiles <- list.files(paste0(path, '/_points/_new'), full.names = T, pattern = '.csv')\nshp   <- shapefile(paste0(path, '/_shp/_base/_admCountries/GTM_adm2.shp'))\n\ndf1 <- read_csv(files[1]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 1 - 2')# Dg\n\ndf2 <- read_csv(files[2]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 2 - 1')#Planas - Dg\n\ndf3 <- read_csv(files[3]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 2 - 2')#Planas #is.numeric(df3$X)\n\ndf4 <- read_csv(files[4]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 2 - 3')#Planas\n\ndf5 <- read_csv(files[5]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 1 - 1')#Planas\n\ndf6 <- read_csv(files[6]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 2 - 4')#Dg\n\ndf7 <- read_csv(files[7]) %>%\n        select(Ubicacion:Y) %>%\n        mutate(Source = 'File 2 - 5')#Planas\n\n# \n\nposDg2 <- grep('\"', df$X, value = F)\ndf2Dg  <- df[posDg,]\n\ndf2Dg$X <- (as.numeric(substr(df2Dg$X, 1, 2)) + (as.numeric(substr(df2Dg$X, 4, 5)) / 60) + (as.numeric(substr(df2Dg$X, 8, 10)) / 3600)) * 1\ndf2Dg$Y <- (as.numeric(substr(df2Dg$Y, 1, 2)) + (as.numeric(substr(df2Dg$Y, 4, 5)) / 60) + (as.numeric(substr(df2Dg$Y, 8, 10)) / 3600)) * -1\ndf2Dg   <- mutate(df2Dg, Source = 'File 2 - 1') %>%\n              .[,2:7]\n\ndf2 <- df2[-posDg2,] %>%\n          mutate(X = as.numeric(X),\n                 Y = as.numeric(Y))\n\ndf1 <- rbind(df1, df2Dg)\n\ndfDg <- df1\n\ndf5 <- df5 %>%\n          mutate(Ubicacion = LUGAR,\n                 Dpto = rep(NA, nrow(.)),\n                 Specie = 'Theobroma cacao', \n                 Source = 'File 1 - 1') %>%\n          select(Ubicacion, Dpto, Specie, X, Y, Source)\n  \n  \ndfPl <- rbind(df2, df3, df4, df5, df7)\n\n# Degrees Df1 - Df6\n\ndfDg <- rbind(df1, df6)\n\n# Write tables\n\nwrite.csv(dfPl, paste0(path, '/_points/_new/df_planas.csv'), row.names = F)\nwrite.csv(dfDg, paste0(path, '/_points/_new/df_degrees.csv'), row.names = F)\n\n",
+    "created" : 1501620086143.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3415065357",
+    "id" : "41BDF52A",
+    "lastKnownWriteTime" : 1501626579,
+    "last_content_update" : 1501626579988,
+    "path" : "W:/_cam/_codes/_r/_presences/joinTables.R",
+    "project_path" : "joinTables.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

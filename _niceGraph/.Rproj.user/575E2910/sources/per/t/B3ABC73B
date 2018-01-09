@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512399884049.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4036257561",
+    "id" : "B3ABC73B",
+    "lastKnownWriteTime" : 1512400083,
+    "last_content_update" : 1512400083502,
+    "path" : "W:/_cam/_codes/_r/_niceGraph/1_extractValues.R",
+    "project_path" : "1_extractValues.R",
+    "properties" : {
+        "cursorPosition" : "13,11",
+        "scrollLine" : "0",
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

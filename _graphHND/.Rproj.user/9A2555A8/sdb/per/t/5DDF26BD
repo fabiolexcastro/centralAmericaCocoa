@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(dplyr)\nrequire(rgeos)\nrequire(gtools)\nrequire(sf)\n\nrm(list = ls())\n\n# Function to use\nzonalSt <- function(lyr_cur, st_fut, shp, by, path_raster, path_output, nameLayer, nameRaster){\n  \n  diff <- st_fut - lyr_cur\n  diff_avg <- mean(diff)\n  \n  adm_ras <- raster::rasterize(shp, diff_avg, by = 'ID_1')\n  zonal <- raster::zonal(diff_avg, adm_ras, fun = 'mean', na.rm = T) %>%\n              tbl_df()\n  \n  adm_sf <- st_as_sf(as(shp, \"SpatialPolygonsDataFrame\"))\n  adm_join <- inner_join(adm_sf, zonal, by = c('ID_1' = 'zone'))\n  \n  write_sf(adm_join, dsn = path_output, layer = nameLayer, driver = 'ESRI Shapefile', update = T)\n  writeRaster(diff_avg, paste(path_raster, nameRaster, sep = '/'), overwrite = T)\n  \n  return(list(adm_join, diff_avg))\n}\n\n\n# Workspace\nsetwd('Z:/_cam')\n\n# Load data\nshp <- shapefile('./_shp/_base/_admCountries/HND_adm1.prj')\nfiles_cur <- list.files('./_workspace/_graphHND/_raster/_current', full.names = T, pattern = '.asc$')\nfiles_50 <- list.files('./_workspace/_graphHND/_raster/_future/_2050', full.names = T, pattern = '.asc$')\ncurrent_bio1 <- raster(files_cur[[1]])\ncurrent_bio12 <- raster(files_cur[[2]])\nst_bio1_50 <- grep('bio_1.asc', files_50, value = T) %>%\n                stack()\nst_bio12_50 <- grep('bio_12.asc', files_50, value = T) %>%\n                stack()\nshp@data$ID_1  <- as.numeric(shp@data$ID_1)\n\n# Execute functions!\nadm_bio1 <- zonalSt(lyr_cur = current_bio1, st_fut = st_bio1_50, shp = shp, by = 'ID_1', \n                    nameLayer = 'hnd_adm1_bio1', path_output = './_workspace/_graphHND/_shp',\n                    nameRaster = 'bio_1_diff.asc', path_raster = './_workspace/_graphHND/_raster/_diff') \nadm_bio12 <- zonalSt(lyr_cur = current_bio12, st_fut = st_bio12_50, shp = shp, by = 'ID_1', \n                     nameLayer = 'hnd_adm1_bio12', path_output = './_workspace/_graphHND/_shp',\n                     nameRaster = 'bio_12_diff.asc', path_raster = './_workspace/_graphHND/_raster/_diff')\n\n\n#\n\nporc <- (adm_bio12[[2]] / mean(st_bio12_50)) * 100\nadm_ras <- raster::rasterize(shp, porc, by = 'ID_1')\nporc_df <- raster::zonal(porc, adm_ras, fun = 'mean', na.rm = T) %>% tbl_df() %>% mutate(mean = round(mean, 2))\nadm_sf <- st_as_sf(as(shp, \"SpatialPolygonsDataFrame\"))\nadm_join <- inner_join(adm_sf, porc_df, by = c('ID_1' = 'zone'))\n\nwrite_sf(adm_join, dsn = './_workspace/_graphHND/_shp', layer = 'hnd_adm1_bio12_porc', driver = 'ESRI Shapefile', update = T)\nwriteRaster(porc, './_workspace/_graphHND/_raster/_diff/bio_12_diff_porc.asc', overwrite = T)\n\n",
+    "created" : 1506000636980.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2325664510",
+    "id" : "5DDF26BD",
+    "lastKnownWriteTime" : 1506026911,
+    "last_content_update" : 1506026911815,
+    "path" : "Z:/_cam/_codes/_r/_graphHND/calculateDelta.R",
+    "project_path" : "calculateDelta.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

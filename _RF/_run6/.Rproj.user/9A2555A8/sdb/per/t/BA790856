@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\n\n# Initial setup\nrm(list = ls())\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  setwd('//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n} else {\n  if(OSys == 'Windows'){\n  setwd('//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n  }\n}\ncat('\\f')\n\n# Load data\nrun <- '_run6'\nload(paste0('_rData/', run, '/threshold_prob.rData'))\nload(paste0('_rData/', run, '/threshold_prob05.rData'))\nload(file = paste0('_rData/', run, '/clustereddata.rData'))\ngcm <- 'current'\n\npathClust <- paste0('_RF/', run, '/_results/_raw/_current/RF_5Clust_lim_current.asc')\npathUnc   <- paste0('_RF/', run, '/_results/_raw/_current/RF_5Unc_current.asc')\npathProb  <- paste0('_RF/', run, '/_results/_raw/_current/RF_5Prob_current.asc')\npath_output <- paste0('_RF/', run, '/_results/_raw/_current')\nthreshold   <- threshold #Prob\nno.absenceclasses <- 2\nno.clusters <- 5\n\nclusterpresdata <- read.csv('_points/_csv/_run6/6_occ_swd_rmOtl.csv')\n\nmixedCategory <- function(pathClust, pathUnc, pathProb, path_output, threshold, no.absenceclasses){\n  \n  occ <- clusterpresdata[,1:2]\n  lyrClust <- raster(pathClust)\n  lyrUnc   <- raster(pathUnc)\n  lyrProb  <- raster(pathProb)\n  \n  thrUnc   <- raster::extract(lyrUnc, occ[,1:2]) \n  thrUnc   <- thrUnc[!is.na(thrUnc)]#quantile(thrUnc, seq(0, 1, 0.01))\n  thrUnc1  <- quantile(thrUnc, 0.1) %>% # 10%\n                as.numeric()\n  min(thrUnc)\n  # values   <- raster::extract(lyrUnc, occ[,1:2])\n  # quantile(values, seq(0,1,0.01))\n  \n  result <- lyrClust\n  \n  result[which(lyrUnc[] < thrUnc1 & lyrProb[] > threshold)] <- max(unique(lyrClust[]), na.rm = T) + 1 # \n  \n  print('To Write Raster')\n  \n  writeRaster(result, paste0(path_output, '/RF_', no.clusters, 'Classes_unc', gcm, '.asc'), overwrite = T)\n  \n  return(result)\n  \n}\n\n\nmixta <- mixedCategory(pathClust = paste0('_RF/', run, '/_results/_process/RF_5Clust_lim_current.asc'),\n                       pathUnc = paste0('_RF/', run, '/_results/_raw/_current/RF_5Unc_current.asc'),\n                       pathProb = paste0('_RF/', run, '/_results/_raw/_current/RF_5Prob_current.asc'),\n                       path_output = paste0('_RF/', run, '/_results/_process'),\n                       threshold = threshold,\n                       no.absenceclasses = 2)\n\nmixta <- mixedCategory(pathClust = paste0('_RF/', run, '/_results/_process/_percentil0_5/RF_5Clust_lim_current.asc'),\n                       pathUnc = paste0('_RF/', run, '/_results/_raw/_current/RF_5Unc_current.asc'),\n                       pathProb = paste0('_RF/', run, '/_results/_raw/_current/RF_5Prob_current.asc'),\n                       path_output = paste0('_RF/', run, '/_results/_process/_percentil0_5'),\n                       threshold = threshold,\n                       no.absenceclasses = 2)\n\n\n\nocc <- clusterpresdata[,1:2]\npathUnc <- paste0('_RF/', run, '/_results/_raw/_current/RF_5Unc_current.asc')\n\nthrUnc <- raster::extract(raster(pathUnc), occ[,1:2]) %>%\n             quantile(0.1) %>% # Quantile 10%\n             as.numeric()\n\nquantile(test, seq(0, 1, 0.01))\n\nsave(thrUnc, file = paste0('_rData/', run, '/threshold_unc.rData'))\n\n# write.csv(occ, paste0(path, '/_points/_csv/occ_final.csv'), row.names = F)\n\n\n## ---\n\n# a <- raster('Z:/_cam/_RF/_run2/_results/_process/_mixed/RF_5Classes_unc_current.asc')\n# b <- raster(paste0(path_output, '/RF_', no.clusters, 'Classes_unc_test', gcm, '.asc'))\n# \n# hist(a)\n# hist(b)\n",
+    "created" : 1513355160188.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3937911492",
+    "id" : "BA790856",
+    "lastKnownWriteTime" : 1511972258,
+    "last_content_update" : 1511972258,
+    "path" : "Z:/_cam/_codes/_r/_categories/2_categoryUnc_Current.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

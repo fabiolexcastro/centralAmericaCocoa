@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512399875021.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1850141082",
+    "id" : "1E57F837",
+    "lastKnownWriteTime" : 1512415008,
+    "last_content_update" : 1512415008,
+    "path" : "W:/_cam/_codes/_r/_niceGraph/3_dual_axis_precTemp.R",
+    "project_path" : "3_dual_axis_precTemp.R",
+    "properties" : {
+        "cursorPosition" : "21,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

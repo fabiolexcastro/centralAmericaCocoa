@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1512153041006.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "7E6356C",
+    "lastKnownWriteTime" : 7308604914264011873,
+    "last_content_update" : 1512153041006,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "DAEAECCD",
+        "caption" : "df_gtm",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=df_gtm&cache_key=DAEAECCD",
+        "displayedObservations" : 54,
+        "environment" : "",
+        "object" : "df_gtm",
+        "preview" : 0,
+        "totalObservations" : 54,
+        "variables" : 9
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

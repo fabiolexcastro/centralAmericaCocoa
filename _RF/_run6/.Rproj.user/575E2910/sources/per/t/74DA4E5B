@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1510663940364.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2166624141",
+    "id" : "74DA4E5B",
+    "lastKnownWriteTime" : 1511828000,
+    "last_content_update" : 1511828000,
+    "path" : "W:/_cam/_codes/_r/_RF/_run6/6_thresholdProb.R",
+    "project_path" : "6_thresholdProb.R",
+    "properties" : {
+        "cursorPosition" : "50,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

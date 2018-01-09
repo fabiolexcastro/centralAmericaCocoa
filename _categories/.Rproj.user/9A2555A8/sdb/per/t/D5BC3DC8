@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\n\n# Initial setup\nrm(list = ls())\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  setwd('//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n} else {\n  if(OSys == 'Windows'){\n    setwd('//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam')\n  }\n}\ncat('\\f')\n\n# Load data\nrun <- '_run6'\nyears <- c('_2030', '_2050')\n\nfor(i in 1:length(years)){\n  \n  print(years[i])\n  \n  lyrs <- paste0('_RF/', run, '/_results/_process/_percentil0_5/_mixed/', years[i]) %>% \n              list.files(full.names = T, pattern = '.asc$') %>%\n              stack()\n  \n  lyr_modal <- raster::modal(lyrs)\n  \n  writeRaster(lyr_modal, paste0('_RF/', run, '/_results/_process/_percentil0_5/_mixed/', 'RF_5Classes_unc', years[i], '.asc'), overwrite = T)\n  \n}\n\n\nimp30 <- raster('_RF/_run6/_results/_process/_percentil0_5/_impGra/Cluster_change_2030.asc')\nimp50 <- raster('_RF/_run6/_results/_process/_percentil0_5/_impGra/Cluster_change_2050.asc')\n\nplot(imp30)\nplot(imp50)\n\n\n",
+    "created" : 1510156371532.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3479215876",
+    "id" : "D5BC3DC8",
+    "lastKnownWriteTime" : 1512072993,
+    "last_content_update" : 1512072993904,
+    "path" : "Z:/_cam/_codes/_r/_categories/3_modalsCategoryUnc.R",
+    "project_path" : "3_modalsCategoryUnc.R",
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

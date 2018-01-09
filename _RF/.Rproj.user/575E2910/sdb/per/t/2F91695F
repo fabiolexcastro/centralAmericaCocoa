@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\nrequire(spdplyr)\n\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  path <- '//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam' \n} else {\n  if(OSys == 'Windows'){\n    path <- '//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam'\n  }\n}\n\nall_countries <- shapefile(paste0(path, '/_shp/_base/all_countries.shp'))\ndf <- read_csv(paste0(path, '/_tables/_FAO/Production_Crops_E_All_Data.csv'))\ndf_cocoa <- filter(df, Item == 'Cocoa, beans')\nshp_cam <- filter(all_countries, UNREG1 == 'Central America')\ndf_cocoa_cam <- filter(df_cocoa, Area %in% unique(shp_cam$ENGLISH))\n\nindx <- as.data.frame(apply(df_cocoa_cam, 2, function(x) any(is.na(x) | is.infinite(x))))\nindx <- rownames_to_column(indx, 'Column')\ncolnames(indx)[2] <- 'Logica'\n      \ncolumns <- filter(indx, Logica != 'TRUE')$Column\ndf_cocoa_cam <- df_cocoa_cam[,columns]\ndf_tidy <- tidyr::gather(df_cocoa_cam, 'year', 'value',  8:ncol(df_cocoa_cam)) %>%#melt(df_cocoa_cam, measure = paste0('Y', 1961:2014))\n              separate(year, c('N', 'year'), sep = 'Y') %>%\n              dplyr::select(-N) %>%\n              mutate(year = as.numeric(year))\n\nView(df_tidy)\nprod2014 <- filter(df_tidy, year == 2014, Element == 'Production') \nsum(prod2014$value)            \n\n# Promedio in all the period\n\nmean_prod <- filter(df_tidy, Element == 'Production') %>%\n                group_by(Area) %>%\n                summarise(Produccion = mean(value),\n                          FirstYear  = min(year),\n                          LastYear   = max(year))\n  \nmean_yield<- filter(df_tidy, Element == 'Yield') %>%\n                group_by(Area) %>%\n                summarise(Rendimto   = mean(value),\n                          FirstYear  = min(year),\n                          LastYear   = max(year))\n\nmutate(mean_yield, Rendimto = Rendimto / 10)\n\napply(mean_prod[,2], 2, mean)\napply(mean_prod[,2], 2, sum)\nsum(mean_prod$Produccion)\nmean(mean_prod$Produccion)\n\n# test <-  filter(df_tidy, Element == 'Production', Area == 'Costa Rica')\n# \n# ggplot(dat = test, aes(x = year, y = value)) + \n#           geom_line()\n\ngg_prod <- ggplot(dat = filter(df_tidy, Element == 'Production'), aes(x = year, y = value, colour = Area)) + \n                geom_line(size = 1.0) +\n                scale_y_log10() +\n                theme(legend.position = 'top') +\n                ylab('Producci?n (Ton) Log10') + \n                xlab('A?o') +\n                labs(color = '') +\n                scale_x_continuous(breaks = seq(1960, 2015, 5))\n\ngg_area <- ggplot(dat = filter(df_tidy, Element == 'Area harvested'), aes(x = year, y = value, colour = Area)) + \n                geom_line(size = 1.0) +\n                #scale_y_log10() +\n                theme(legend.position = 'top') +\n                ylab('Area (Has)') + \n                xlab('A?o') +\n                labs(color = '') +\n                scale_x_continuous(breaks = seq(1960, 2015, 5))\n\nggsave(gg_prod, file = paste0(path, '/_figures/_FAO/prod.png'), width = 12, height = 6)\nggsave(gg_area, file = paste0(path, '/_figures/_FAO/area.png'), width = 12, height = 6)\n       \n\n# Average for years after 2000\n\ndf_2000 <- filter(df_tidy, year > 2000, year < 2011) %>%\n              group_by(Area) %>% \n              summarise(Produccion = mean(value),\n                        FirstYear = min(year),\n                        LastYear = max(year))\n\n\nwrite.csv(df_2000, paste0(path, '/_tables/_FAO/summ_2000_2010.csv'), row.names = FALSE)\n       \n       \n",
+    "created" : 1506958726810.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "619334662",
+    "id" : "2F91695F",
+    "lastKnownWriteTime" : 1502815082,
+    "last_content_update" : 1502815082,
+    "path" : "W:/_cam/_codes/_r/statsFAO.R",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

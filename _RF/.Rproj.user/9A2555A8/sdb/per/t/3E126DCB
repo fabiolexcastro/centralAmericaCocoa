@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# CIAT, 2016 Updated: February 2017\n# Author: Bunn & Castro\n# Target: predict RF - Cluster\n\n# Load libraries\n\nlibrary(tidyverse)\nlibrary(raster)\nlibrary(rgdal)\nlibrary(cclust)\nlibrary(outliers)\nlibrary(dismo)\nlibrary(gtools)\nlibrary(multcomp)\nlibrary(sp)\nlibrary(rgeos)\nlibrary(outliers)  \nlibrary(FactoMineR)\nlibrary(pROC)\nlibrary(randomForest)\nlibrary(stringr)\n\n# Load files\n\nset.seed(1234)\n\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  path <- '//mnt/Workspace_cluster_9/Coffee_Cocoa2/_cam' \n} else {\n  if(OSys == 'Windows'){\n    path <- '//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_cam'\n  }\n}\n\nrun <- '_run6'\n# load(paste0(path, '/_rData/', run, '/clusterpresdata.rData'))\nload(paste0(path, '/_rData/', run, '/clusterdata.rData'))\nload(paste0(path, '/_RF/', run, '/_models/rflist_5.rData'))\n\ngcmlist        <- 'current'\nar5biofolder   <- paste0(path, '/_raster/_climate/_current/_asc')\nresultsfolder  <- paste0(path, '/_RF/', run, '/_results/_raw') \nmodelfolder    <- paste0(path, '/_RF/', run, '/_models')\ngcm            <- gcmlist\ntoMatch        <- \"bio\"\ngcmfiles       <- list.files(ar5biofolder, full.names = TRUE, pattern = \".asc$\") %>% \n                     mixedsort() %>%\n                     grep('bio', ., value = T)\nclimatelayers  <- stack(gcmfiles) \n\n# Values\n\nclimatevalues  <- data.frame(getValues(climatelayers))\nrff <- do.call(randomForest::combine, rflist)\nrasterClust <- raster::predict(rff, climatevalues) # To cluster be use of modalraster\nrasterRFclust_mask <- climatelayers[[1]]\nvalues(rasterRFclust_mask) <- rasterClust\n\nwriteRaster(rasterRFclust_mask, paste0(path, '/_RF/', run, '/_results/_raw/_current/RF_5Clust_Current.asc'), overwrite = T)\n\n# Probabilistic\n\nrasterProbs            <- raster::predict(rff, climatevalues, type = \"prob\")\nmax(rasterProbs[,1], na.rm = TRUE)\nrasterRF               <- rowSums(rasterProbs[,3:7]) \nuncertainty            <- apply(rasterProbs, 1, max)   #valor m?ximo por fila\n\nrasterRFprob           <- climatelayers[[1]]\nvalues(rasterRFprob)   <- rasterRF \nrasterRFuncertainty    <- climatelayers[[1]] \nvalues(rasterRFuncertainty) <- uncertainty\nno.clusters <- 5\n\nwriteRaster(rasterRFprob,        paste(resultsfolder, \"/_current/RF_\", no.clusters, \"Prob_\", gcm, \".asc\", sep=\"\"),  format=\"ascii\", overwrite = T)\nwriteRaster(rasterRFuncertainty, paste(resultsfolder, \"/_current/RF_\", no.clusters, \"Unc_\",  gcm, \".asc\", sep=\"\"),   format=\"ascii\", overwrite = T)\n\nplot(rasterRFprob)\ntitle(main = gcm, sub=\"Suitability\")\nplot(rasterRFclust_mask)\ntitle(main=gcm,sub=\"SuitClass\")\nplot(rasterRFuncertainty)\ntitle(main=gcm,sub=\"Uncertainty\")\n\n\n",
+    "created" : 1506971957005.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3485632187",
+    "id" : "3E126DCB",
+    "lastKnownWriteTime" : 1507922017,
+    "last_content_update" : 1507922018030,
+    "path" : "Z:/_cam/_codes/_r/_RF/2_predictRF.R",
+    "project_path" : "2_predictRF.R",
+    "properties" : {
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

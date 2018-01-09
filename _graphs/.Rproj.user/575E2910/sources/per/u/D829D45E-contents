@@ -1,0 +1,10 @@
+
+
+rm(list = ls())
+load('_rData/_run6/occ_cluster.Rdata')
+
+
+occ_cluster
+head(occ_cluster)
+
+table(occ_cluster$cluster)

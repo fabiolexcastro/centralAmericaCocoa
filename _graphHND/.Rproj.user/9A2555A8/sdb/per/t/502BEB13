@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n\nrequire(raster)\nrequire(rgdal)\nrequire(dplyr)\nrequire(rgeos)\nrequire(gtools)\n\nsetwd('Z:/_cam')\n\nfiles <- list.files('./_raster/_climate/_current/_asc', full.names = T, pattern = '.asc$') %>%\n            mixedsort()\nbio_1  <- grep('bio_1.asc', files, value = T) %>%\n            raster()\nbio_12 <- grep('bio_12.asc', files, value = T) %>%\n            raster()\nst <- stack(bio_1, bio_12)\n\nhnd <- shapefile('./_shp/_base/_admCountries/HND_adm1.shp')\n\nextractValues <- function(st, mask){\n  \n  var_cut <- raster::crop(st, mask) %>%\n                raster::mask(mask)\n  \n}\n\nresult <- extractValues(st = st, mask = hnd)\nresult <- unstack(result)\n\nMap('writeRaster', x = result, file = paste0('./_workspace/_graphHND/_raster/current_bio_', c(1,12), '.asc'))\n\n",
+    "created" : 1505165125178.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "101269189",
+    "id" : "502BEB13",
+    "lastKnownWriteTime" : 1505165088,
+    "last_content_update" : 1505165088,
+    "path" : "Z:/_cam/_codes/_r/_graphHND/extractRastersCurrent.R",
+    "project_path" : "extractRastersCurrent.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

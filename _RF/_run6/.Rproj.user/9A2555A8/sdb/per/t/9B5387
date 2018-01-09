@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# CIAT, 2017\n# Author: Castro \n# Target: Extremes scenarios\n\n# Load  libraries\nlibrary(tidyverse)\nlibrary(raster)\nlibrary(rgdal)\nlibrary(magrittr)\n\n# Initial setup\nrm(list = ls())\nOSys <- Sys.info(); OSys <- OSys[names(OSys)=='sysname']\nif(OSys == 'Linux'){\n  setwd('//dapadfs/workspace_cluster_9/Coffee_Cocoa/_cam')\n} else {\n  if(OSys == 'Windows'){\n    setwd('//dapadfs/workspace_cluster_9/Coffee_Cocoa2/_cam')\n  }\n}\noptions(scipen = 999)\ncat('\\f')\n\n# Load data\nrun <- '_run6'\nload(paste0('_rdata/', run, '/clustereddata.rData'))\n\n# Function\ncalc_mean_crn <- function(path){\n  \n  result <- raster(path) %>% raster::extract(., occ[,c('Lon', 'Lat')]) %>% mean()\n  \n}\n\ncalc_mean_ftr <- function(path, var){\n  \n  # path <- '_raster/_climate/_future/_rcp60/_asc'\n  # var <- 'bio_1.asc'\n  \n  yrs <- list.files(path, full.names = F)\n  mdl <- list.dirs(paste(path, yrs[1], sep = '/'), full.names = F, recursive = F)\n  fls <- list.files(paste0(path), full.names = T, pattern = '.asc$', recursive = T)\n  stk <- grep(var, fls, value = T) %>% grep('2050', ., value = T) %>% stack()\n  vls <- raster::extract(stk, occ[,c('Lon', 'Lat')])\n  colnames(vls) <- c(paste(mdl, yrs[2], sep = ''))\n  \n  df <- apply(vls, 2, mean) %>% \n    as.data.frame() %>% \n    rownames_to_column(var = 'Model') %>% \n    mutate(var = unlist(strsplit(var, '.asc')),\n           period = 2050) \n  \n  colnames(df) <- c('Model', 'Valor', 'var', 'period')\n  df <- dplyr::select(df, var, period, Model, Valor)\n  \n  df$Model <- gsub('_2050', '', df$Model)\n  \n  return(df)\n  \n}\n\n# Extraction values current\ncrn_bio1 <- calc_mean_crn(path = '_raster/_climate/_current/_asc/bio_1.asc')\ncrn_bio12 <- calc_mean_crn(path = '_raster/_climate/_current/_asc/bio_12.asc')\ndf_crn <- data.frame(crn_bio1 = crn_bio1, crn_bio12 = crn_bio12) %>% \n            t() %>% \n            as.data.frame() %>% \n            rename(Valor = V1) %>% \n            mutate(var = c('bio_1', 'bio_12'),\n                   period = 'current',\n                   Model = 'current') %>%\n            dplyr::select(var, period, Model, Valor)\n\n# Extraction values Future\nftr_bio1 <- calc_mean_ftr(path = '_raster/_climate/_future/_rcp60/_asc', var = 'bio_1.asc')\nftr_bio12 <- calc_mean_ftr(path = '_raster/_climate/_future/_rcp60/_asc', var = 'bio_12.asc')\n\n# Join data frames\ndf_all <- rbind(df_crn, ftr_bio1, ftr_bio12); rm(df_crn, ftr_bio1, ftr_bio12, crn_bio1, crn_bio12)\n\n# Calc differences\nbio1_crn <- filter(df_all, var == 'bio_1', period == 'current') %>% extract2(4)\nbio1_ftr <- filter(df_all, var == 'bio_1', period == '2050') %>% extract2(4)\nbio1_dif <- bio1_ftr - bio1_crn\nbio1_dif <- data.frame(Model = extract2(filter(df_all, var == 'bio_1', period == '2050'), 3), Valor = bio1_dif)\n\nbio12_crn <- filter(df_all, var == 'bio_12', period == 'current') %>% extract2(4)\nbio12_ftr <- filter(df_all, var == 'bio_12', period == '2050') %>% extract2(4)\nbio12_dif <- bio12_ftr - bio12_crn\nbio12_dif <- data.frame(Model = extract2(filter(df_all, var == 'bio_12', period == '2050'), 3), Valor = bio12_dif)\n\n# Temperature increase & precipitation reduction\nsummary(bio1_dif$Valor)\nsummary(bio12_dif$Valor)\n\nbio1_dif[bio1_dif$Valor > 20.23,]\nbio12_dif[bio12_dif$Valor < 0,] #mohc_hadgem2_es\n\n# Intermediate\nsummary(bio1_dif$Valor)\nsummary(bio12_dif$Valor)\n\nbio1_dif[bio1_dif$Valor > 15.75 & bio1_dif$Valor < 19.75,]\nbio12_dif[findInterval(mean(bio12_dif$Valor), sort(bio12_dif$Valor)),] #nimr_hadgem2_ao\n\n# Low increase in the temperature & increase in the precipitation\nsummary(bio1_dif$Valor)\nsummary(bio12_dif$Valor)\n\nbio1_dif[bio1_dif$Valor < 14.99,]\nbio12_dif[bio12_dif$Valor > 73.41,] #gfdl_esm2m\n\n\n\n\n\n\n",
+    "created" : 1512662894011.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "29|32|33|0|\n35|37|60|0|\n",
+    "hash" : "3572571828",
+    "id" : "9B5387",
+    "lastKnownWriteTime" : 1512995136,
+    "last_content_update" : 1512995136649,
+    "path" : "Z:/_cam/_codes/_r/_RF/_run6/7_extremeScenarios_ok.R",
+    "project_path" : "7_extremeScenarios_ok.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,207 @@
+
+# CIAT, 2017
+# Author: Mesa & Castro 
+# Target: Count has and plot for Cluster suitability zones
+
+library(ggalt)
+library(hrbrthemes)
+library(tidyverse)
+library(raster)
+library(rgdal)
+library(magrittr)
+library(foreign)
+require(stringr)
+require(stringi)
+require(foreign)
+require(data.table)
+
+# Load files
+
+OSys <- Sys.info(); OSys <- OSys[names(OSys)=="sysname"]
+if(OSys == "Linux"){
+  path <- "//mnt/workspace_cluster_9/Coffee_Cocoa2/_eastAfrica" 
+} else {
+  if(OSys == "Windows"){
+    path <- "//dapadfs/Workspace_cluster_9/Coffee_Cocoa2/_eastAfrica"
+  }
+}
+
+adm1          <- shapefile(paste0(path, "/_shp/_base/MWI_adm1.shp"))
+clust_current <- raster(paste0(path, '/_RF/_run1/_results/_process/RF_3Clust_current.asc'))
+clust_30      <- raster(paste0(path, '/_RF/_run1/_results/_process/RF_3clustModal_2030.asc'))
+clust_50      <- raster(paste0(path, '/_RF/_run1/_results/_process/RF_3clustModal_2050.asc'))
+
+writeRaster(clust_current, paste0(path, '/_RF/_run1/_results/_process/_clust/RF_3clust_current.tif'))
+writeRaster(clust_30, paste0(path, '/_RF/_run1/_results/_process/_clust/RF_3clustModal_2030.tif'))
+writeRaster(clust_50, paste0(path, '/_RF/_run1/_results/_process/_clust/RF_3clustModal_2050.tif'))
+
+# Write python code for tabulate area and execute it
+
+sink(paste0(path, '/_codes/_py/suitTabAreaClust.py'))
+cat('import arcpy', fill = T)
+cat('from arcpy import env', fill = T)
+cat('from arcpy.sa import *', fill = T)
+cat('env.workspace = "W:/_eastAfrica/_RF/_run1/_results/_process/_clust"', fill = T) 
+cat('env.extent = "intRF_3clust_current_prj.tif"', fill = T)
+cat('env.snapRaster = "intRF_3clust_current_prj.tif"', fill = T)
+cat('inZoneData = "intRF_3clust_current_prj.tif"', fill = T)
+cat('desc = arcpy.Describe(inZoneData)', fill = T)
+cat('zoneField = "Value"', fill = T)
+cat('inClassData = "W:/_eastAfrica/_shp/_base/MWI_adm1_prj.shp"', fill = T)
+cat('classField = "NAME_1"', fill = T)
+cat('outTable = "W:/_eastAfrica/_tables/_tabulateArea/_run1/_clustSuit/tabArea_clustCurrent2.dbf"', fill = T)
+cat('arcpy.processingCellSize = desc.meanCellHeight', fill = T)
+cat('print "Process"', fill = T)
+cat('arcpy.CheckOutExtension("Spatial")', fill = T)
+cat('TabulateArea(inZoneData, zoneField, inClassData, classField, outTable, arcpy.processingCellSize)', fill = T)
+cat('print "Finish"', fill = T)
+sink()
+
+system('python W:/_eastAfrica/_codes/_py/suitTabAreaClust.py') 
+
+# Read tabulate area tables
+
+dfs        <- list.files(paste0(path, '/_tables/_tabulateArea/_run1/_clustSuit'), pattern = '.dbf$', full.names = T) 
+df_current <- read.dbf(dfs[[3]])
+df_2030    <- read.dbf(dfs[[1]])
+df_2050    <- read.dbf(dfs[[2]])
+
+treatment_df <- function(df, period){
+  
+  df_ok <- t(df) %>%
+            as.data.frame() %>%
+            rename(Unsuit1 = V1,
+                   Unsuit2 = V2,
+                   WM  = V3,
+                   TSHP  = V4, 
+                   CD = V5) %>%
+            setDT(., keep.rowname = T) %>%
+            rename(District = rn) %>%
+            tbl_df() %>%
+            .[-1,] %>%
+            mutate(Unsuit1 = Unsuit1/10000,
+                   Unsuit2 = Unsuit2/10000,
+                   WM      = WM/10000,
+                   TSHP    = TSHP/10000,
+                   CD      = CD/10000) %>%
+            gather(., 'Categoria', 'Hectareas', 2:6) %>%
+            mutate(Period = period,
+                   District = tolower(District)) %>%
+            rename(name = District) 
+        
+}
+
+capFirst <- function(s){
+  paste(toupper(substring(s, 1, 1)), substring(s, 2), sep = "")
+}
+
+df_current_ok      <- treatment_df(df = df_current, period = 'Present')
+df_current_ok$name <- capFirst(df_current_ok$name)
+
+df_2030_ok         <- treatment_df(df = df_2030, period = '2030')
+df_2030_ok$name    <- capFirst(df_current_ok$name)
+
+df_2050_ok         <- treatment_df(df = df_2050, period = '2050')
+df_2050_ok$name    <- capFirst(df_current_ok$name)
+
+all_df             <- rbind(df_current_ok, df_2030_ok, df_2050_ok)
+
+write.csv(all_df, paste0(path, '/_tables/_tabulateArea/_run1/_clustSuit/all_df.csv'), row.names = F)
+
+# -----------------------
+# Read group table - se le a?adio manualmente la columna region
+# -----------------------
+
+all_df     <- read_csv(paste0(path, '/_tables/_tabulateArea/_run1/_clustSuit/all_df_region.csv'))
+
+# Calculate percentage
+
+all_df$Categoria <- replace(all_df$Categoria, all_df$Categoria == 'Unsuit1', 'Unsuitability')
+all_df$Categoria <- replace(all_df$Categoria, all_df$Categoria == 'Unsuit2', 'Unsuitability')
+
+all_df2    <- all_df %>%
+                  group_by(Region, Period) %>%
+                  mutate(Percentage = (Hectareas/sum(Hectareas)) * 100)  %>%
+                  ungroup()
+
+# all_df3    <- all_df %>% 
+#                   group_by(Region, Categoria, Period) %>% 
+#                   summarise(Hectareas = sum(Hectareas))
+
+all_df2$Period    <- factor(all_df2$Period, levels = c('Present', '2030', '2050'))
+all_df2$Categoria <- factor(all_df2$Categoria, levels = c('Unsuitability', 'WM', 'TSHP', 'CD'))
+
+
+unique(all_df2$Categoria)
+filter(all_df2, Region == 'Mulanje')
+
+
+gg_mulanje  <- ggplot(filter(all_df2, Region == 'Mulanje'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+gg_nkhata  <- ggplot(filter(all_df2, Region == 'Nkhata Bay'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+gg_thyolo  <- ggplot(filter(all_df2, Region == 'Thyolo'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+all_df3    <- all_df2 %>%
+                  group_by(Region, Categoria, Period) %>%
+                  summarise(Percentage = sum(Percentage))
+
+write.csv(all_df3, paste0(path, '/_tables/_tabulateArea/_run1/_clustSuit/all_df_regionSumm.csv'))
+
+
+gg_chiKar  <- ggplot(filter(all_df3, Region == 'Chitipa/Karonga'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+gg_phalombe  <- ggplot(filter(all_df3, Region == 'Phalombe'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+gg_chiradz  <- ggplot(filter(all_df3, Region == 'Chiradzulu'), aes(x = as.factor(Period), y = Percentage, fill = Categoria)) + 
+                  geom_bar(stat = "identity", position = position_dodge()) +
+                  xlab('') + ylab('Percentage') +
+                  theme(legend.position = "top") +
+                  scale_fill_manual(values = c("#C7D79E", "#9e4f4f", "#e69800", "#0084a8")) +
+                  scale_y_continuous(limits = c(0, 100), breaks = seq(0, 100, 20)) + 
+                  theme(axis.text.x = element_text(angle = 0, hjust = 0.5)) +
+                  labs(fill = '') 
+
+
+plot_all <- plot_grid(gg_mulanje, gg_nkhata, gg_thyolo, gg_chiKar, gg_phalombe, gg_chiradz, labels = c('A', 'B', 'C', 'D', 'E', 'F'), scale = 0.9, label_size = 18, ncol = 3, nrow = 2)
+plot_all
+cowplot::ggsave(filename = paste0(path, '/_plots/_suit/suitClusterRun1.png'), units='in', width=15, height=8, dpi = 300)
+
+districts <- c('Mulanje', 'Nkhata Bay', 'Thyolo', 'Chitipa/Karonga', 'Phalombe', 'Chiradzulu')
+labels    <- c('A', 'B', 'C', 'D', 'E', 'F')
+labelsAll <- as.data.frame(cbind(districts, labels))

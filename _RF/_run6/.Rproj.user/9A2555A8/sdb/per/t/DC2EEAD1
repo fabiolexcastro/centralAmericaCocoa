@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(tidyverse)\nrequire(raster)\n\n# Initial setup\nrm(list = ls())\nsetwd('Z:/_cam')\nsetwd('W:/_cam')\noptions(scipen = 999)\n\nlowerthreshold <- 0.34\n\n# Load data - Summaries\ncurrent_prob <-  raster('_RF/_run6/_results/_raw/_current/RF_5Prob_current.asc')\nfuture_prob <- raster('_RF/_run6/_results/_process/RF_5prob_2050.asc')\n\n######## Prob change\nbinmatrix <- matrix(c(0, lowerthreshold, 0, lowerthreshold, 1, 1), ncol = 3, byrow = T)\ncurrentbin <- reclassify(current_prob, binmatrix)\nfuturebin <- reclassify(future_prob, binmatrix)\nsuitmask <- currentbin + futurebin\nsuitmask[suitmask!=0] <- 1\nsuitmask[suitmask==0] <- NA\n\ncurrent_masked <- raster::mask(current_prob, suitmask)\nfuture_masked <- raster::mask(future_prob, suitmask)\nprob_change <- future_masked - current_masked\n\n\nprob_change <- future_prob - current_prob\nprob_change <- raster::mask(prob_change, suitmask)\n\n\nwriteRaster(prob_change, '_RF/_run6/_results/_process/RF_5change_prob_2050.asc', overwrite = T)\n",
+    "created" : 1513082228215.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4115543579",
+    "id" : "DC2EEAD1",
+    "lastKnownWriteTime" : 1513085328,
+    "last_content_update" : 1513085328839,
+    "path" : "Z:/_cam/_codes/_r/_RF/_run6/11_mask.R",
+    "project_path" : "11_mask.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

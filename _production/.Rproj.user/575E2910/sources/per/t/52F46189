@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1513630419825.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "52F46189",
+    "lastKnownWriteTime" : 7308604914264011873,
+    "last_content_update" : 1513630419825,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "83069B33",
+        "caption" : "df.prod.cocoa.cam",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=df.prod.cocoa.cam&cache_key=83069B33",
+        "displayedObservations" : 24,
+        "environment" : "",
+        "object" : "df.prod.cocoa.cam",
+        "preview" : 0,
+        "totalObservations" : 24,
+        "variables" : 61
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

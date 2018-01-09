@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nlibrary(raster)\nlibrary(rgdal)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(sf)\nlibrary(gtools)\n\n# Initial setup\nrm(list = ls())\noptions(scipen = 999)\nsetwd('Z:/_cam')\nmyproj <- '+proj=longlat +datum=WGS84 +no_defs'\ncat('\\f')\n\n# Load data\nload('_rData/_run6/clustereddata.rData'); rm(clusteredpresdata, clusterdata, labelRF, no.clusters)\n\nvrs <- c('prec', 'tmax', 'tmean', 'tmin')\ncrn <- list.files('_raster/_climate/_current/_asc', full.names = TRUE, pattern = '.asc$') %>% \n          mixedsort() %>% \n          grep(paste0(vrs, collapse = '|'), ., value = T) %>% \n          stack()\n\n# Extract values to current\ncrn_vls <- raster::extract(crn, occ[,1:2]) %>% \n              cbind(occ[,1:2], .) %>% \n              tbl_df() %>% \n              select(-c(Lon, Lat))\ncrn_vls <- colMeans(crn_vls, na.rm = T)\ncrn_vls <- t(data.frame(crn_vls))\n\nwrite.csv(crn_vls, '_workspace/_graphPointsCocoa/_current/zonal_current_mean.csv', row.names = F)\n",
+    "created" : 1512402616779.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2765909576",
+    "id" : "4C79AC93",
+    "lastKnownWriteTime" : 1512402598,
+    "last_content_update" : 1512402598,
+    "path" : "Z:/_cam/_codes/_r/_niceGraph/1_extractValues_crn.R",
+    "project_path" : "1_extractValues_crn.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

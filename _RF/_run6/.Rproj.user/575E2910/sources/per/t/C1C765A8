@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1511833859967.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2150377534",
+    "id" : "C1C765A8",
+    "lastKnownWriteTime" : 1511836641,
+    "last_content_update" : 1511836641,
+    "path" : "W:/_cam/_codes/_r/_RF/_run6/7_extremeScenarios.R",
+    "project_path" : "7_extremeScenarios.R",
+    "properties" : {
+        "cursorPosition" : "42,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

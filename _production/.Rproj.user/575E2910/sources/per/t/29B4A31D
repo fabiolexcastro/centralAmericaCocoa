@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508961618336.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "24|21|34|0|\n",
+    "hash" : "2590352607",
+    "id" : "29B4A31D",
+    "lastKnownWriteTime" : 1512153812,
+    "last_content_update" : 1513629987462,
+    "path" : "W:/_cam/_codes/_r/_production/statsFAO.R",
+    "project_path" : "statsFAO.R",
+    "properties" : {
+        "cursorPosition" : "48,8",
+        "scrollLine" : "39"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(tidyverse)\nrequire(gtools)\nrequire(rgeos)\n\n# Initial setup\nrm(list = ls())\nsetwd('Z:/_cam')\noptions(scipen = 999)\ncat('\\f')\n\n# Load data\nload('_rData/_run6/clustereddata.rData'); rm(labelRF, no.clusters, clusteredpresdata)\nocc <- dplyr::select(occ, Lon, Lat)\nimp30 <- raster('_RF/_run6/_results/_process/_percentil0_5/_impGra/Cluster_change_2030.asc')\n\n# Farmers\nfrms_imp30 <- raster::extract(imp30, occ[,1:2]) %>% cbind(occ, .)\n\nfrm_adaptc <- filter(frms_imp30, . == 1)\nfrm_adaptc <- sample(x = row.names(frm_adaptc), size = 1) %>% as.numeric() %>% occ[.,] %>% mutate(impact = 'Adaptacion Incremental' )\n\nfrm_transf <- filter(frms_imp30, . == 3)\nfrm_transf <- sample(x = row.names(frm_transf), size = 1) %>% as.numeric() %>% occ[.,] %>% mutate(impact = 'Transformacion')\n\nfrm_resili <- filter(frms_imp30, . == 5)\nfrm_resili <- sample(x = row.names(frm_resili), size = 1) %>% as.numeric() %>% occ[.,] %>% mutate(impact = 'Resilicencia')\n\ndf <- rbind(frm_adaptc, frm_transf, frm_resili)\n\ncoordinates(df) <- ~ Lon + Lat\n\nwriteOGR(df, dsn = '_shp/_frms', layer = 'farmers', driver = 'ESRI Shapefile')\n\n",
+    "created" : 1513125118688.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3658562427",
+    "id" : "C99DBF1A",
+    "lastKnownWriteTime" : 1513126895,
+    "last_content_update" : 1513126895452,
+    "path" : "Z:/_cam/_codes/_r/_farmers/extValues.R",
+    "project_path" : "extValues.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

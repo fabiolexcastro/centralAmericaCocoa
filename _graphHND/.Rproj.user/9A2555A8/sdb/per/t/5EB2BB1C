@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nrequire(raster)\nrequire(rgdal)\nrequire(dplyr)\nrequire(rgeos)\nrequire(gtools)\n\n# Workspace\nrm(list = ls())\nsetwd('Z:/_cam')\n\n# Load Data\nhnd <- shapefile('./_shp/_base/_admCountries/HND_adm1.shp')\nyears <- c('_2030', '_2050')\nmodels <- list.files('./_raster/_climate/_future/_rcp60/_asc/_2030', full.names = F)\nhnd <- shapefile('./_shp/_base/_admCountries/HND_adm0.shp')\nvars <- c('bio_1.asc', 'bio_12.asc')\ny <- 1\n\nlapply(1:length(years), function(y){ \n\n  print(years[y])\n  \n  lapply(1:length(models), function(x){\n    \n    print(models[x])\n    \n    files <- paste0('./_raster/_climate/_future/_rcp60/_asc/', years[y], '/', models[x]) %>%\n                list.files(full.names = T, pattern = '.asc$') %>%\n                grep(paste0(vars, collapse = '|'), ., value = T) %>%\n                unique()\n    \n    print('To Stack')\n    \n    st <- lapply(files, FUN = raster) %>%\n            stack()\n    \n    print('To Cut')\n    st_cut <- raster::crop(st, hnd) %>%\n                raster::mask(hnd) %>%\n                unstack()\n    \n    Map('writeRaster', x = st_cut, filename = paste0('./_workspace/_graphHND/_raster/_future/', years[y], '/', models[x], '_', vars))\n  \n  })\n\n})\n \n",
+    "created" : 1505165146472.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3001586218",
+    "id" : "5EB2BB1C",
+    "lastKnownWriteTime" : 1506008419,
+    "last_content_update" : 1506008419647,
+    "path" : "Z:/_cam/_codes/_r/_graphHND/extractRastersFuture.R",
+    "project_path" : "extractRastersFuture.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

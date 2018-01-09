@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\n# Load libraries\nlibrary(raster)\nlibrary(rgdal)\nlibrary(dplyr)\nlibrary(tidyr)\nlibrary(sf)\nlibrary(gtools)\nlibrary(rgeos)\nlibrary(doSNOW)\nlibrary(foreach)\nlibrary(parallel)\nlibrary(doMC)\n\n# Initial setup\nrm(list = ls())\noptions(scipen = 999)\nsetwd('Z:/_cam')\nmyproj <- '+proj=longlat +datum=WGS84 +no_defs'\ncat('\\f')\n\n# Load Data\nload('_rData/_run6/clustereddata.rData'); rm(clusteredpresdata, labelRF, no.clusters)\n\nvrs <- c('prec', 'tmax', 'tmean', 'tmin')\ngcms <- list.files('_raster/_climate/_future/_rcp60/_asc/_2030', full.names = F)\nyrs <- c('_2030', '_2050')\n\ny <- 1\n\n# Extract values\ncl <- makeCluster(19)\nregisterDoSNOW(cl)\n\n# registerDoMC()\n\nforeach(i = 1:length(gcms), .packages = c('raster', 'dplyr', 'gtools', 'foreach', 'sp'), .verbose = TRUE) %dopar% {\n  \n  fls <- list.files(paste0('_raster/_climate/_future/_rcp60/_asc/', yrs[y], '/', gcms[i]), full.names = T, pattern = '.asc$') %>%\n            .[-grep('bio', ., value = F)] %>%\n            .[-grep('cons_mths', ., value = F)] %>%\n            mixedsort() %>%\n            stack()\n  \n  df <- raster::extract(fls, occ[,1:2]) %>% \n            cbind(., occ[,1:2]) %>% \n            tbl_df() %>% \n            dplyr::select(-c(Lon, Lat))\n  mns <- colMeans(df, na.rm = T) %>% t() %>% data.frame()\n  mns <- mutate(mns, zone = 1:nrow(mns)) %>% select(zone, prec_1:tmin_12)\n  \n  write.csv(mns, paste0('_workspace/_graphPointsCocoa/', yrs[y], '/mean_', gcms[i], '_', yrs[y], '.csv'), row.names = F)\n  \n}\n\n# Another way\nlapply(1:length(yrs), function(y){\n  \n  print(yrs[y])\n  \n  lapply(1:length(gcms), function(i){ \n    \n    print(gcms[i])\n    \n    fls <- list.files(paste0('_raster/_climate/_future/_rcp60/_asc/', yrs[y], '/', gcms[i]), full.names = T, pattern = '.asc$') %>%\n              .[-grep('bio', ., value = F)] %>%\n              .[-grep('cons_mths', ., value = F)] %>%\n              mixedsort() %>%\n              stack()\n    \n    df <- raster::extract(fls, occ[,1:2]) %>% \n              cbind(., occ[,1:2]) %>% \n              tbl_df() %>% \n              dplyr::select(-c(Lon, Lat))\n    mns <- colMeans(df, na.rm = T) %>% t() %>% data.frame()\n    mns <- mutate(mns, zone = 1:nrow(mns)) %>% select(zone, prec_1:tmin_12)\n    \n    write.csv(mns, paste0('_workspace/_graphPointsCocoa/', yrs[y], '/mean_', gcms[i], '_', yrs[y], '.csv'), row.names = F)\n    \n  }) \n  \n})\n\n",
+    "created" : 1512402618311.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1383563361",
+    "id" : "6A12D898",
+    "lastKnownWriteTime" : 1512412950,
+    "last_content_update" : 1512412951329,
+    "path" : "Z:/_cam/_codes/_r/_niceGraph/2_extractValues_ftr.R",
+    "project_path" : "2_extractValues_ftr.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

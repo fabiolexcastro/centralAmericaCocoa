@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1508250044373.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3658363181",
+    "id" : "33AC2FE4",
+    "lastKnownWriteTime" : 1508256605,
+    "last_content_update" : 1508256606147,
+    "path" : "W:/_cam/_codes/_r/_graphHND/calculateDelta.R",
+    "project_path" : "calculateDelta.R",
+    "properties" : {
+        "cursorPosition" : "37,0",
+        "scrollLine" : "22"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
